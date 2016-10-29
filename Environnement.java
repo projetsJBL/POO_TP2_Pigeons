@@ -6,6 +6,7 @@
  * maj 29/10/2016
  */
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -28,4 +29,12 @@ public class Environnement extends JPanel {
 		return image;
 	}
 
+	public int[] getTaille() {
+		int x = image.getIconWidth();
+		int y = image.getIconHeight();
+		int[] taille = { x, y };
+
+		return taille;
+
+	}
 }
