@@ -1,6 +1,7 @@
+
 /**
  * Classe Environnement
- * Implemente le fond d'écran du jeu
+ * Implemente le fond d'Ã©cran du jeu
  * @author JB
  * maj 29/10/2016
  */
@@ -9,20 +10,22 @@ import java.awt.Graphics;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-public class Environnement extends JPanel{
-	
+public class Environnement extends JPanel {
+	protected ImageIcon image = new ImageIcon("environnement.jpg");
 	/**
-	 * Version par défault
+	 * Version par dÃ©fault
 	 */
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected void paintComponent(Graphics g){
-		
-		ImageIcon image = new ImageIcon("environnement.jpg");
+	protected void paintComponent(Graphics g) {
 		super.setOpaque(false);
 		g.drawImage(image.getImage(), 0, 0, null);
 		super.paintComponent(g);
+	}
+
+	public ImageIcon getImage() {
+		return image;
 	}
 
 }
