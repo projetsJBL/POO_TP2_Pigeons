@@ -7,23 +7,23 @@
  */
 
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class Environnement extends JPanel implements MouseListener, MouseMotionListener {
+public class Environnement extends JPanel implements MouseListener {
+
 	protected ImageIcon image = new ImageIcon("environnement.jpg");
 	private int xclic, yclic;
+	private static int aleatoire;
 	/**
 	 * Version par défault
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/* Creation du fond */
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.setOpaque(false);
@@ -32,8 +32,13 @@ public class Environnement extends JPanel implements MouseListener, MouseMotionL
 
 	}
 
+	/* Accesseurs */
 	public ImageIcon getImage() {
 		return image;
+	}
+
+	public static int getAleatoire() {
+		return aleatoire;
 	}
 
 	public int[] getTaille() {
@@ -45,39 +50,18 @@ public class Environnement extends JPanel implements MouseListener, MouseMotionL
 
 	}
 
-	public int getXclic() {
+	public double getXclic() {
 		return xclic;
 	}
 
-	public int getYclic() {
+	public double getYclic() {
 		return yclic;
 	}
 
+	/* Evenements des cliques */
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		xclic = e.getX();
-		yclic = e.getY();
-		System.out.println(xclic + ";" + yclic);
-
-		Nourriture n = new Nourriture("nourriture.png");
-
-		// ajout de nourriture dans la liste nourriture de pigeon
-		n.setX((double) xclic);
-		n.setY((double) yclic);
-		Pigeon.addNourriture(n);
-		for (int i = 0; i < Pigeon.getNourriture().size(); i++){
-		System.out.println(
-					"nourriture " + Pigeon.getNourriture().get(i).getX() + ";" + Pigeon.getNourriture().get(i).getX());}
-
-		// Ajout de l'image dans l'interface graphique
-		n.getLabel().setLocation(xclic, yclic);
-		this.add(n.getLabel());
-
-		Main.evt.addNourriture(n);
-		System.out.println("nourriture image " + n.getLabel().getLocation());
-
-		Main.evt.startNourriture();
 
 	}
 
@@ -102,19 +86,65 @@ public class Environnement extends JPanel implements MouseListener, MouseMotionL
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
+		xclic = (int) e.getX();
+		yclic = (int) e.getY();
+		System.out.println(xclic + ";" + yclic);
 
-	}
+		int min = 1;
+		int max = 5;
+		aleatoire = (int) (min + (Math.random() * max - min));
+		if (aleatoire > 1) {
+			// Gestion de la nourriture
+			Nourriture n = new Nourriture("nourriture.png");
+			// ajout de nourriture dans la liste nourriture de pigeon à la
+			// position
+			// cliquée
+			n.setX((int) xclic);
+			n.setY((int) yclic);
+			Pigeon.addNourriture(n);
 
-	@Override
-	public void mouseDragged(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+			// coordonnées des pigeons dans la liste pigeon dans la liste
+			// nourritures
+			for (int i = 0; i < Pigeon.getNourriture().size(); i++) {
+				System.out.println("nourriture " + Pigeon.getNourriture().get(i).getX() + ";"
+						+ Pigeon.getNourriture().get(i).getY());
 
-	}
+				// Ajout de l'image dans l'interface graphique
+				n.getLabel().setLocation((int) xclic, (int) yclic);
+				this.add(n.getLabel());
+				Main.evt.addNourriture(n);
+				Main.evt.startNourriture();
 
-	@Override
-	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+				// Position de l'image dans l'interface graphique
+				System.out.println("nourriture image " + n.getLabel().getLocation());
+			}
+		} else {
+			// Gestion DE LA PEUR
+			Nourriture n = new Nourriture("fusil.jpg");
+			// ajout de nourriture dans la liste nourriture de pigeon à la
+			// position
+			// cliquée
+			n.setX((int) xclic);
+			n.setY((int) yclic);
+			Pigeon.addNourriture(n);
 
+			// coordonnées des pigeons dans la liste pigeon dans la liste
+			// nourritures
+			for (int i = 0; i < Pigeon.getNourriture().size(); i++) {
+				System.out.println("nourriture " + Pigeon.getNourriture().get(i).getX() + ";"
+						+ Pigeon.getNourriture().get(i).getY());
+
+				// Ajout de l'image dans l'interface graphique
+				n.getLabel().setLocation((int) xclic, (int) yclic);
+				this.add(n.getLabel());
+				Main.evt.addNourriture(n);
+				Main.evt.startNourriture();
+
+				// Position de l'image dans l'interface graphique
+				System.out.println("nourriture image " + n.getLabel().getLocation());
+
+			}
+		}
 	}
 
 }
