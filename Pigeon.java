@@ -102,7 +102,7 @@ public class Pigeon extends ElementDynamique{
 			this.setEtat(Etat.WAITING);
 		
 		//il y a de la nourriture
-		else if (!nourriture.isEmpty() && !devantNourriture){ //si il y a de la nourriture et qu'il n'a pas encore bouge		
+		else if (!nourriture.isEmpty() && !this.devantNourriture){ //si il y a de la nourriture et qu'il n'a pas encore bouge		
 
 			Nourriture n = nourriture.get(nourriture.size()-1);
 			double[] vecteurPN = {n.getX() - this.getX(), n.getY() - this.getY()}; //vecteur pigeon-nourriture
@@ -118,11 +118,14 @@ public class Pigeon extends ElementDynamique{
 			}
 		}
 		
-		else if(!nourriture.isEmpty() && this.getEtat().equals(Etat.MOVING)){ //si il arrive sur de la nourriture qui n'est pas mangee
+		//manger
+		else if(!nourriture.isEmpty() && this.devantNourriture){ //si il arrive sur de la nourriture qui n'est pas mangee
 			System.out.println(this.getNom() + " ARRIVED");
 			System.out.println("Position arrivee " + this.getNom() + ": " + this.getX() + "," + this.getY());
 			this.setEtat(Etat.EATING);
 		}
+		
+		//dormir
 		else if(nourriture.isEmpty() && fatigue >= 20)
 			this.setEtat(Etat.SLEEPING);
 	}
@@ -155,17 +158,8 @@ public class Pigeon extends ElementDynamique{
 	/*
 	 * Mange et retire la nourriture la plus fraiche de la liste nourriture si tous les pigeons l'ont mange
 	 */
-	public void manger(Nourriture n){
-		mangent++;		
-		
-		if(mangent == pigeons.size()){			
+	public void manger(Nourriture n){	
 			removeNourriture(n);
-			mangent = 0;
-		}
-	}
-	
-	public void manger2(Nourriture n){
-		removeNourriture(n);
 	}
 	
 	/*
@@ -206,6 +200,7 @@ public class Pigeon extends ElementDynamique{
 					this.manger(n);
 					Evenements.supprimerNourriture(n);
 					Thread.sleep(1000);
+					this.setDevantNourriture(false);
 					System.out.println(this.getNom() + " ATE");
 					System.out.println("Il reste " + nourriture.size() + " nourritures");
 				}catch (InterruptedException e) {e.printStackTrace();}
