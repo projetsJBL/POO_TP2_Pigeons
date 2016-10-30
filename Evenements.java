@@ -18,26 +18,27 @@ public class Evenements extends JFrame {
 	/**
 	 * version par default
 	 */
-
+	/* Attributs */
 	private ArrayList<Pigeon> pigeons;
-	private ArrayList<Nourriture> nourritures;
-	Environnement ev;
+	private static ArrayList<Nourriture> nourritures;
+	static Environnement ev;
 
 	// Constructeur
 	public Evenements() {
 		super("Jeu des Pigeons affamés");
 
-		// on récupère la taille de l'image
+		// on récupère l'image
 		ev = new Environnement();
 		ImageIcon image = ev.getImage();
 
 		// on adapte la fenêtre à la taille de l'image de fond
+		ev.setLayout(null);
 		this.setSize(image.getIconWidth(), image.getIconHeight());
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
+		/* evenemnt Souris */
 		add(ev);
 		addMouseListener(ev);
-		addMouseMotionListener(ev);
 
 		// Création des listes nécessaires
 		pigeons = new ArrayList<Pigeon>();
@@ -47,49 +48,57 @@ public class Evenements extends JFrame {
 	// Ajout d'un pigeon dans la liste appropriée
 	public void addPigeon(Pigeon pigeon) {
 		pigeons.add(pigeon);
+	}
 
+	/* ajout de nourriture dans la liste appropriée */
+	public void addNourriture(Nourriture n) {
+		nourritures.add(n);
 	}
 
 	// Retirer de la nourriture quand elle est mangée
 	// retire le dernier élément ajouter
-	public void RemoveNourriture() {
+	public static void RemoveNourriture() {
 		int i = nourritures.size();
 		nourritures.remove(i - 1);
 	}
-	// gestion des réactions des pigeons
 
+	/* appel du thread et affichage des pigeons */
 	public void startPigeon() {
 		// Ajout des pigeons dans la fenêtre de jeux
 
 		for (Pigeon pigeon : pigeons) {
+			pigeon.getLabel().setBounds((int) pigeon.getX(), (int) pigeon.getY(), 100, 100);
 			ev.add(pigeon.getLabel());
-			add(ev);
-		}
-
-		setVisible(true);
-
-	}
-
-	public void startNourriture() {
-		for (Nourriture nourriture : nourritures) {
-			ev.add(nourriture.getLabel());
-
 		}
 		add(ev);
 		setVisible(true);
 
-		for (Nourriture nourriture : nourritures) {
-			nourriture.getLabel().setLocation((int) nourriture.getX(), (int) nourriture.getY());
-		}
 		for (Pigeon pigeon : pigeons) {
-
+			// appel du thread des pigeons
 			pigeon.start();
+		}
+
+	}
+
+	/* ajout de l'image nourriture dans l'interface */
+	public void startNourriture() {
+		for (Nourriture nourriture : nourritures) {
+			nourriture.getLabel().setBounds((int) nourriture.getX(), (int) nourriture.getY(), 100, 100);
+			ev.add(nourriture.getLabel());
+			ev.repaint();
+			setVisible(true);
 		}
 	}
 
-	public void addNourriture(Nourriture n) {
-		// TODO Auto-generated method stub
-		nourritures.add(n);
+	/* suppresion de l'image nourriture */
+	public static void supprimerNourriture(Nourriture n) {
+		if (!nourritures.isEmpty()) {
+			RemoveNourriture();
+			ev.remove(n.getLabel());
+			ev.repaint();
+			Main.evt.setVisible(true);
+		}
+
 	}
 
 }
