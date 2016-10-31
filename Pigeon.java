@@ -113,7 +113,7 @@ public class Pigeon extends ElementDynamique{
 		else{
 			this.timer = 0;
 		//il n'y a plus de nourriture
-		if(nourriture.isEmpty() && fatigue < 20)
+		if(nourriture.isEmpty() && fatigue < 300)
 			this.setEtat(Etat.WAITING);
 		
 		//il y a de la nourriture
@@ -138,7 +138,7 @@ public class Pigeon extends ElementDynamique{
 		}
 		
 		//dormir
-		else if(nourriture.isEmpty() && fatigue >= 20)
+		else if(nourriture.isEmpty() && fatigue >= 300)
 			this.setEtat(Etat.SLEEPING);
 		}
 	}
@@ -207,11 +207,17 @@ public class Pigeon extends ElementDynamique{
 		while(true){
 			this.determinerEtat();
 			
+			for(Nourriture n : nourriture){
+				n.setPourrir(n.getPourrir()+1);
+			}
+			
+			
+			
 			switch(this.getEtat()){
 			case WAITING: 
 				try {
 					fatigue++;
-					Thread.sleep(1000/velocity);
+					Thread.sleep(1000);
 					System.out.println(this.getNom() + " WAITING...");
 				} catch (InterruptedException e1) {e1.printStackTrace();}
 				break;
@@ -225,8 +231,12 @@ public class Pigeon extends ElementDynamique{
 				try{
 					Nourriture n = nourriture.get(nourriture.size()-1);
 					System.out.println(this.getNom() + " EATING...");
-					this.manger(n);
-					Evenements.supprimerNourriture(n);
+					System.out.println("pourriture: " + n.getPourrir());
+					if(n.getPourrir() < 1000){
+						System.out.println("COUCOU");
+						this.manger(n);
+						Evenements.supprimerNourriture(n);
+					}
 					Thread.sleep(1000);
 					this.setDevantNourriture(false);
 					System.out.println(this.getNom() + " ATE");
