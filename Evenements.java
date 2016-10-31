@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 /**
  * Classe Evenements Implemente l'interface graphique et appel le thread pigeon
@@ -14,15 +15,16 @@ import javax.swing.JFrame;
  */
 
 public class Evenements extends JFrame {
-	static Evenements e = new Evenements();
 	private static final long serialVersionUID = 1L;
 	/**
 	 * version par default
 	 */
 	/* Attributs */
 
+	private static ArrayList<Nourriture> nourritures;
 	private static ArrayList<Nourriture> pokeball;
 	static Environnement ev;
+	static Evenements e = new Evenements();
 
 	// Constructeur
 	public Evenements() {
@@ -43,6 +45,7 @@ public class Evenements extends JFrame {
 
 		// Création des listes nécessaires
 
+		nourritures = new ArrayList<Nourriture>();
 		pokeball = new ArrayList<Nourriture>();
 	}
 
@@ -51,6 +54,17 @@ public class Evenements extends JFrame {
 	}
 
 	/* ajout de nourriture dans la liste appropriée */
+	public static void addNourriture(Nourriture n) {
+		nourritures.add(n);
+	}
+
+	// Retirer de la nourriture quand elle est mangée
+	// retire le dernier élément ajouter
+	public static void RemoveNourriture() {
+		int i = nourritures.size();
+		nourritures.remove(i - 1);
+
+	}
 
 	public static void addPoke(Nourriture poke) {
 		pokeball.add(poke);
@@ -74,24 +88,28 @@ public class Evenements extends JFrame {
 		setVisible(true);
 		for (int i = 0; i < Pigeon.getPigeons().size(); i++) {
 			Pigeon.getPigeons().get(i).start();
+			System.out.println(Pigeon.getPigeons().size());
 			// appel du thread des pigeons
+
 		}
 
 	}
 
 	/* ajout de l'image nourriture dans l'interface */
 	public void startNourriture() {
-		for (Nourriture nourriture : Pigeon.getNourriture()) {
+		for (Nourriture nourriture : nourritures) {
+			
 			nourriture.getLabel().setBounds((int) nourriture.getX(), (int) nourriture.getY(), 100, 100);
 			ev.repaint();
 			setVisible(true);
+			
 		}
-
 	}
 
 	/* suppresion de l'image nourriture */
 	public static void supprimerNourriture(Nourriture n) {
-		if (!Pigeon.getNourriture().isEmpty()) {
+		if (!nourritures.isEmpty()) {
+
 			Pigeon.removeNourriture(n);
 			ev.remove(n.getLabel());
 			ev.repaint();
@@ -108,15 +126,46 @@ public class Evenements extends JFrame {
 		}
 	}
 
+	/* suppresion de l'image nourriture */
+	public static void supprimerPokeball(Nourriture poke) {
+		if (!nourritures.isEmpty()) {
+			RemovePokeball();
+			ev.remove(poke.getLabel());
+			ev.repaint();
+			e.setVisible(true);
+		}
+
+	}
+
 	public static void main(String[] args) {
 
 		// pigeons
-		Pigeon p1 = new Pigeon("pigeon2.png");
+		Pigeon p1 = new Pigeon("pigeon.png");
 		p1.setX(10);
 		p1.setY(10);
 		p1.setVelocity(90);
+		p1.setNom("p1");
 
-		// Démarre le jeu
+		Pigeon p2 = new Pigeon("pigeon2.png");
+		p2.setX(500);
+		p2.setY(10);
+		p2.setVelocity(110);
+		p2.setNom("p2");
+
+		/*
+		 * Pigeon p3 = new Pigeon("pigeon.png"); p3.setX(10); p3.setY(400);
+		 * p3.setVelocity(90); e.addPigeon(p3);
+		 * 
+		 * Pigeon p4 = new Pigeon("pigeon2.png"); p4.setX(10); p4.setY(200);
+		 * p4.setVelocity(110); e.addPigeon(p4);
+		 * 
+		 * Pigeon p5 = new Pigeon("pigeon.png"); p5.setX(250); p5.setY(10);
+		 * p5.setVelocity(90); e.addPigeon(p5);
+		 * 
+		 * Pigeon p6 = new Pigeon("pigeon2.png"); p6.setX(500); p6.setY(400);
+		 * p6.setVelocity(110); e.addPigeon(p6);
+		 */
+
 		e.startPigeon();
 	}
 }
