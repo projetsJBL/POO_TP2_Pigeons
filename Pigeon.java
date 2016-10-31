@@ -207,11 +207,15 @@ public class Pigeon extends ElementDynamique{
 		while(true){
 			this.determinerEtat();
 			
+			//les aliments se periment
 			for(Nourriture n : nourriture){
 				n.setPourrir(n.getPourrir()+1);
-			}
-			
-			
+				if(n.getPourrir() > 1000){
+					JLabel label = n.getLabel();
+					label.setIcon(new ImageIcon("nourriture_pourrie.png"));
+					n.setLabel(label);
+				}
+			}			
 			
 			switch(this.getEtat()){
 			case WAITING: 
@@ -231,9 +235,7 @@ public class Pigeon extends ElementDynamique{
 				try{
 					Nourriture n = nourriture.get(nourriture.size()-1);
 					System.out.println(this.getNom() + " EATING...");
-					System.out.println("pourriture: " + n.getPourrir());
 					if(n.getPourrir() < 1000){
-						System.out.println("COUCOU");
 						this.manger(n);
 						Evenements.supprimerNourriture(n);
 					}
