@@ -126,12 +126,6 @@ public class Environnement extends JPanel implements MouseListener {
 		} else {
 			peur = true;
 
-			// Calcul de points de fuite
-			int x = (int) Math.random() * (1000) * (Math.random() < 0.5 ? -1 : 1);
-			int y = (int) Math.random() * (1000) * (Math.random() < 0.5 ? -1 : 1);
-			int[] p = { x, y };
-			setpointFuite(p);
-
 			// Gestion de la nourriture
 			Nourriture n = new Nourriture("pokeball.png");
 			// ajout de nourriture dans la liste nourriture de pigeon à la
