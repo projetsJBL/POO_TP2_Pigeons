@@ -117,7 +117,7 @@ public class Environnement extends JPanel implements MouseListener {
 			// Ajout de l'image dans l'interface graphique
 			n.getLabel().setBounds((int) n.getX(), (int) n.getY(), 100, 100);
 			this.add(n.getLabel());
-
+			Evenements.addNourriture(n);
 			Evenements.e.startNourriture();
 
 			// Position de l'image dans l'interface graphique
