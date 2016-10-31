@@ -113,15 +113,16 @@ public class Pigeon extends ElementDynamique{
 		else{
 			this.timer = 0;
 		//il n'y a plus de nourriture
-		if(nourriture.isEmpty() && fatigue < 300)
+		if(nourriture.isEmpty() && fatigue < 300 && !this.devantNourriture)
 			this.setEtat(Etat.WAITING);
 		
 		//il y a de la nourriture
-		else if (!nourriture.isEmpty() && !this.devantNourriture){ //si il y a de la nourriture et qu'il n'a pas encore bouge
+		else if (!nourriture.isEmpty() && !this.devantNourriture ){ //si il y a de la nourriture et qu'il n'a pas encore bouge
 			Nourriture n = nourriture.get(nourriture.size()-1);
 			double[] vecteurPN = {n.getX() - this.getX(), n.getY() - this.getY()}; //vecteur pigeon-nourriture
 			double normePN = Math.sqrt((Math.pow(vecteurPN[0], 2) + Math.pow(vecteurPN[1], 2))); //distance pigeon-nourriture			
-			if(normePN > 1){
+			if(normePN > 1 && nourriture.get(nourriture.size()-1).getPourrir() < 1000){
+				this.setDevantNourriture(false);
 				this.setEtat(Etat.MOVING);
 				fatigue = 0; //on remet leur fatigue a 0 pour eviter qu'il s'endorment juste apres
 			}
@@ -132,9 +133,15 @@ public class Pigeon extends ElementDynamique{
 		
 		//manger
 		else if(!nourriture.isEmpty() && this.devantNourriture){ //si il arrive sur de la nourriture qui n'est pas mangee
-			System.out.println(this.getNom() + " ARRIVED");
-			System.out.println("Position arrivee " + this.getNom() + ": " + this.getX() + "," + this.getY());
-			this.setEtat(Etat.EATING);
+			if(nourriture.get(nourriture.size()-1).getPourrir() < 1000){
+				System.out.println(this.getNom() + " ARRIVED");
+				System.out.println("Position arrivee " + this.getNom() + ": " + this.getX() + "," + this.getY());
+				this.setEtat(Etat.EATING);
+			}
+			else{
+				this.setDevantNourriture(false);
+				this.setEtat(Etat.WAITING);
+			}
 		}
 		
 		//dormir
@@ -205,17 +212,21 @@ public class Pigeon extends ElementDynamique{
 	@Override
 	public void run(){
 		while(true){
+			//les aliments se periment
+			if(!nourriture.isEmpty()){
+				for(Nourriture n : nourriture){
+					n.setPourrir(n.getPourrir()+1);
+					if(n.getPourrir() > 1000){
+						JLabel label = n.getLabel();
+						label.setIcon(new ImageIcon("nourriture_pourrie.png"));
+						n.setLabel(label);
+					}
+				}			
+			}
+			
 			this.determinerEtat();
 			
-			//les aliments se periment
-			for(Nourriture n : nourriture){
-				n.setPourrir(n.getPourrir()+1);
-				if(n.getPourrir() > 1000){
-					JLabel label = n.getLabel();
-					label.setIcon(new ImageIcon("nourriture_pourrie.png"));
-					n.setLabel(label);
-				}
-			}			
+			
 			
 			switch(this.getEtat()){
 			case WAITING: 
