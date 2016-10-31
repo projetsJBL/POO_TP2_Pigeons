@@ -19,6 +19,7 @@ public class Environnement extends JPanel implements MouseListener {
 	private int xclic, yclic;
 	private static int aleatoire;
 	private static boolean peur;
+	private int[] pointfuite = new int[2];
 	/**
 	 * Version par défault
 	 */
@@ -59,8 +60,12 @@ public class Environnement extends JPanel implements MouseListener {
 		return yclic;
 	}
 
-	public boolean getPeur() {
+	public static boolean getPeur() {
 		return peur;
+	}
+
+	public int[] pointFuite() {
+		return pointfuite;
 	}
 
 	/* Evenements des cliques */
@@ -127,6 +132,13 @@ public class Environnement extends JPanel implements MouseListener {
 		} else {
 
 			peur = true;
+
+			// Calcul de points de fuite
+			int x = (int) Math.random() * (1000) * (Math.random() < 0.5 ? -1 : 1);
+			int y = (int) Math.random() * (1000) * (Math.random() < 0.5 ? -1 : 1);
+			pointfuite[0] = x;
+			pointfuite[1] = y;
+
 			// Gestion de la nourriture
 			Nourriture n = new Nourriture("fusil.jpg");
 			// ajout de nourriture dans la liste nourriture de pigeon à la
