@@ -110,14 +110,14 @@ public class Environnement extends JPanel implements MouseListener {
 			// ajout de nourriture dans la liste nourriture de pigeon à la
 			// position
 			// cliquée
-			n.setX((int) xclic);
-			n.setY((int) yclic);
+			n.setX((int) xclic - 15);
+			n.setY((int) yclic - 85);
 			Pigeon.addNourriture(n);
 
 			// Ajout de l'image dans l'interface graphique
 			n.getLabel().setBounds((int) n.getX(), (int) n.getY(), 100, 100);
 			this.add(n.getLabel());
-			Evenements.addNourriture(n);
+
 			Evenements.e.startNourriture();
 
 			// Position de l'image dans l'interface graphique
@@ -131,8 +131,8 @@ public class Environnement extends JPanel implements MouseListener {
 			// ajout de nourriture dans la liste nourriture de pigeon à la
 			// position
 			// cliquée
-			n.setX((int) xclic);
-			n.setY((int) yclic);
+			n.setX((int) xclic - 15);
+			n.setY((int) yclic - 85);
 
 			// ajout de l'image dans l'interface graphique
 			n.getLabel().setBounds((int) n.getX(), (int) n.getY(), 100, 100);
