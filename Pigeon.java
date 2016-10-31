@@ -17,7 +17,7 @@ public class Pigeon extends ElementDynamique{
 	private static int fatigue;
 	private static ArrayList<Nourriture> nourriture = new ArrayList<Nourriture>();
 	private static ArrayList<Pigeon> pigeons = new ArrayList<Pigeon>();
-	private int frame;
+	private int timer;
 	
 	String nom;
 	boolean devantNourriture;
@@ -108,8 +108,10 @@ public class Pigeon extends ElementDynamique{
 	public void determinerEtat(){	
 		if(Environnement.getPeur()){
 			this.setEtat(Etat.RUNNING);
+			this.timer++;
 		}
 		else{
+			this.timer = 0;
 		//il n'y a plus de nourriture
 		if(nourriture.isEmpty() && fatigue < 20)
 			this.setEtat(Etat.WAITING);
@@ -152,9 +154,7 @@ public class Pigeon extends ElementDynamique{
 			normePN = Math.sqrt((Math.pow(vecteurPN[0], 2) + Math.pow(vecteurPN[1], 2))); //distance pigeon-nourriture
 			double[] PNnormalise = {vecteurPN[0] / normePN, vecteurPN[1] / normePN}; //Vecteur normalise pour un deplacement a vitesse uniforme
 			
-			//tant qu'il n'a pas atteint la destination (approximatif) 
-			System.out.println("position arrondie pigeon " + this.getNom() + ": " + (int)this.getX() + " , " + (int)this.getY());
-			
+			//tant qu'il n'a pas atteint la destination (approximatif) 		
 			this.setX(this.getX() + PNnormalise[0]);
 			this.setY(this.getY() + PNnormalise[1]);
 			this.getLabel().setLocation((int)this.getX(), (int)this.getY()); //on met a jour le sprite
@@ -177,30 +177,25 @@ public class Pigeon extends ElementDynamique{
 	 * Les pigeons fuient
 	 */
 	public void fuir(){		
+		//position pokeball
 		double x = (double)Environnement.getXclic();
 		double y = (double)Environnement.getYclic();
-		boolean condition = Environnement.getPeur();
-		while(condition){
-			
-			
-			double[] vecteurFuite = {this.getX() - x, this.getY() - y};
-			double normeVecteurFuite = Math.sqrt((Math.pow(vecteurFuite[0], 2) + Math.pow(vecteurFuite[1], 2))); //distance pigeon-nourriture
-			double[] vecteurFuiteNormalise = {vecteurFuite[0] / normeVecteurFuite, vecteurFuite[1] / normeVecteurFuite}; //Vecteur normalise pour un deplacement a vitesse uniforme
-			
-			//fuite
-			this.setX(this.getX() + vecteurFuiteNormalise[0]);
-			this.setY(this.getY() + vecteurFuiteNormalise[1]);
-			this.getLabel().setLocation((int)this.getX(), (int)this.getY()); //on met a jour le sprite
-			
-			//on recalcule la position du pigeon par rapport a la nourriture
-			vecteurFuite[0] = this.getX() - x;
-			vecteurFuite[1] = this.getY() - y;
-			normeVecteurFuite = Math.sqrt((Math.pow(vecteurFuite[0], 2) + Math.pow(vecteurFuite[1], 2))); //distance pigeon-nourriture
-			
-			if(normeVecteurFuite >= 50){
-				condition = false;				
-			}
+		
+		//vecteur fuite
+		double[] vecteurFuite = {this.getX() - x, this.getY() - y};
+		double normeVecteurFuite = Math.sqrt((Math.pow(vecteurFuite[0], 2) + Math.pow(vecteurFuite[1], 2))); //distance pigeon-pokeball
+		double[] vecteurFuiteNormalise = {vecteurFuite[0] / normeVecteurFuite, vecteurFuite[1] / normeVecteurFuite}; //Vecteur normalise pour un deplacement a vitesse uniforme
+					
+		//fuite
+		this.setX(this.getX() + vecteurFuiteNormalise[0]);
+		this.setY(this.getY() + vecteurFuiteNormalise[1]);
+		this.getLabel().setLocation((int)this.getX(), (int)this.getY()); //on met a jour le sprite
+		
+		//condition de fin de fuite
+		if(timer > 250){	
+			Environnement.setPeur(false);
 		}
+		
 	}
 	
 	/**
