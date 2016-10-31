@@ -64,7 +64,7 @@ public class Environnement extends JPanel implements MouseListener {
 		return peur;
 	}
 
-	public int[] pointFuite() {
+	public int[] getpointFuite() {
 		return pointfuite;
 	}
 
