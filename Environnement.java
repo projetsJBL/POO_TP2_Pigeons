@@ -16,10 +16,10 @@ import javax.swing.JPanel;
 public class Environnement extends JPanel implements MouseListener {
 
 	protected ImageIcon image = new ImageIcon("environnement.jpg");
-	private int xclic, yclic;
+	private static int xclic;
+	private static int yclic;
 	private static int aleatoire;
 	private static boolean peur;
-	private static int[] pointfuite = new int[2];
 	/**
 	 * Version par défault
 	 */
@@ -52,11 +52,11 @@ public class Environnement extends JPanel implements MouseListener {
 
 	}
 
-	public double getXclic() {
+	public static double getXclic() {
 		return xclic;
 	}
 
-	public double getYclic() {
+	public static double getYclic() {
 		return yclic;
 	}
 
@@ -64,12 +64,8 @@ public class Environnement extends JPanel implements MouseListener {
 		return peur;
 	}
 
-	public static int[] getpointFuite() {
-		return pointfuite;
-	}
-
-	public void setpointFuite(int[] p) {
-		pointfuite = p;
+	public static void setPeur(Boolean b) {
+		peur = b;
 	}
 
 	/* Evenements des cliques */
@@ -121,7 +117,7 @@ public class Environnement extends JPanel implements MouseListener {
 			// Ajout de l'image dans l'interface graphique
 			n.getLabel().setBounds((int) n.getX(), (int) n.getY(), 100, 100);
 			this.add(n.getLabel());
-			Evenements.e.addNourriture(n);
+			Evenements.addNourriture(n);
 			Evenements.e.startNourriture();
 
 			// Position de l'image dans l'interface graphique
