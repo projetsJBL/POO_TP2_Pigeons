@@ -21,6 +21,7 @@ public class Evenements extends JFrame {
 	/* Attributs */
 	private ArrayList<Pigeon> pigeons;
 	private static ArrayList<Nourriture> nourritures;
+	private static ArrayList<Nourriture> pokeball;
 	static Environnement ev;
 	static Evenements e = new Evenements();
 
@@ -44,6 +45,11 @@ public class Evenements extends JFrame {
 		// Création des listes nécessaires
 		pigeons = new ArrayList<Pigeon>();
 		nourritures = new ArrayList<Nourriture>();
+		pokeball = new ArrayList<Nourriture>();
+	}
+
+	public ArrayList<Nourriture> getPokeball() {
+		return pokeball;
 	}
 
 	// Ajout d'un pigeon dans la liste appropriée
@@ -64,6 +70,15 @@ public class Evenements extends JFrame {
 
 	}
 
+	public static void addPoke(Nourriture poke) {
+		pokeball.add(poke);
+	}
+
+	public static void RemovePokeball() {
+		int i = pokeball.size();
+		pokeball.remove(i - 1);
+	}
+
 	/* appel du thread et affichage des pigeons */
 	public void startPigeon() {
 		// Ajout des pigeons dans la fenêtre de jeux
@@ -71,8 +86,9 @@ public class Evenements extends JFrame {
 		for (Pigeon pigeon : pigeons) {
 			pigeon.getLabel().setBounds((int) pigeon.getX(), (int) pigeon.getY(), 100, 100);
 			ev.add(pigeon.getLabel());
+			repaint();
 		}
-		add(ev);
+
 		setVisible(true);
 
 		for (Pigeon pigeon : pigeons) {
@@ -103,6 +119,25 @@ public class Evenements extends JFrame {
 
 	}
 
+	public void startPokeball() {
+		for (Nourriture poke : pokeball) {
+			poke.getLabel().setBounds((int) poke.getX(), (int) poke.getY(), 100, 100);
+			ev.repaint();
+			setVisible(true);
+		}
+	}
+
+	/* suppresion de l'image nourriture */
+	public static void supprimerPokeball(Nourriture poke) {
+		if (!nourritures.isEmpty()) {
+			RemovePokeball();
+			ev.remove(poke.getLabel());
+			ev.repaint();
+			e.setVisible(true);
+		}
+
+	}
+
 	public static void main(String[] args) {
 
 		// pigeons
@@ -112,11 +147,25 @@ public class Evenements extends JFrame {
 		p1.setVelocity(90);
 		e.addPigeon(p1);
 
-		Pigeon p2 = new Pigeon("pigeon.png");
+		Pigeon p2 = new Pigeon("pigeon2.png");
 		p2.setX(500);
-		p2.setY(400);
+		p2.setY(10);
 		p2.setVelocity(110);
 		e.addPigeon(p2);
+
+		/*
+		 * Pigeon p3 = new Pigeon("pigeon.png"); p3.setX(10); p3.setY(400);
+		 * p3.setVelocity(90); e.addPigeon(p3);
+		 * 
+		 * Pigeon p4 = new Pigeon("pigeon2.png"); p4.setX(10); p4.setY(200);
+		 * p4.setVelocity(110); e.addPigeon(p4);
+		 * 
+		 * Pigeon p5 = new Pigeon("pigeon.png"); p5.setX(250); p5.setY(10);
+		 * p5.setVelocity(90); e.addPigeon(p5);
+		 * 
+		 * Pigeon p6 = new Pigeon("pigeon2.png"); p6.setX(500); p6.setY(400);
+		 * p6.setVelocity(110); e.addPigeon(p6);
+		 */
 
 		e.startPigeon();
 	}
