@@ -18,6 +18,7 @@ public class Environnement extends JPanel implements MouseListener {
 	protected ImageIcon image = new ImageIcon("environnement.jpg");
 	private int xclic, yclic;
 	private static int aleatoire;
+	private static boolean peur;
 	/**
 	 * Version par défault
 	 */
@@ -58,6 +59,10 @@ public class Environnement extends JPanel implements MouseListener {
 		return yclic;
 	}
 
+	public boolean getPeur() {
+		return peur;
+	}
+
 	/* Evenements des cliques */
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -94,6 +99,7 @@ public class Environnement extends JPanel implements MouseListener {
 		int max = 5;
 		aleatoire = (int) (min + (Math.random() * max - min));
 		if (aleatoire > 1) {
+			peur = false;
 			// Gestion de la nourriture
 			Nourriture n = new Nourriture("nourriture.png");
 			// ajout de nourriture dans la liste nourriture de pigeon à la
@@ -112,14 +118,16 @@ public class Environnement extends JPanel implements MouseListener {
 				// Ajout de l'image dans l'interface graphique
 				n.getLabel().setLocation((int) xclic, (int) yclic);
 				this.add(n.getLabel());
-				Main.evt.addNourriture(n);
-				Main.evt.startNourriture();
+				Evenements.e.addNourriture(n);
+				Evenements.e.startNourriture();
 
 				// Position de l'image dans l'interface graphique
 				System.out.println("nourriture image " + n.getLabel().getLocation());
 			}
 		} else {
-			// Gestion DE LA PEUR
+
+			peur = true;
+			// Gestion de la nourriture
 			Nourriture n = new Nourriture("fusil.jpg");
 			// ajout de nourriture dans la liste nourriture de pigeon à la
 			// position
@@ -137,14 +145,16 @@ public class Environnement extends JPanel implements MouseListener {
 				// Ajout de l'image dans l'interface graphique
 				n.getLabel().setLocation((int) xclic, (int) yclic);
 				this.add(n.getLabel());
-				Main.evt.addNourriture(n);
-				Main.evt.startNourriture();
+				Evenements.e.addNourriture(n);
+				Evenements.e.startNourriture();
 
 				// Position de l'image dans l'interface graphique
 				System.out.println("nourriture image " + n.getLabel().getLocation());
 
 			}
 		}
+		// Gestion de la peur, une chance sur 5;
+
 	}
 
 }
