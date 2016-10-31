@@ -8,7 +8,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 /**
- * Classe Evenements Implemente les réactions des pigeons selon leur etat
+ * Classe Evenements Implemente l'interface graphique et appel le thread pigeon
  * 
  * @author JB maj 29/10/2016
  */
@@ -61,6 +61,7 @@ public class Evenements extends JFrame {
 	public static void RemoveNourriture() {
 		int i = nourritures.size();
 		nourritures.remove(i - 1);
+
 	}
 
 	/* appel du thread et affichage des pigeons */
@@ -85,7 +86,6 @@ public class Evenements extends JFrame {
 	public void startNourriture() {
 		for (Nourriture nourriture : nourritures) {
 			nourriture.getLabel().setBounds((int) nourriture.getX(), (int) nourriture.getY(), 100, 100);
-			ev.add(nourriture.getLabel());
 			ev.repaint();
 			setVisible(true);
 		}
@@ -95,6 +95,7 @@ public class Evenements extends JFrame {
 	public static void supprimerNourriture(Nourriture n) {
 		if (!nourritures.isEmpty()) {
 			RemoveNourriture();
+			Pigeon.removeNourriture(n);
 			ev.remove(n.getLabel());
 			ev.repaint();
 			e.setVisible(true);
@@ -103,15 +104,15 @@ public class Evenements extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		
+
 		// pigeons
-		Pigeon p1 = new Pigeon("pigeon.jpg");
+		Pigeon p1 = new Pigeon("pigeon.png");
 		p1.setX(10);
 		p1.setY(10);
 		p1.setVelocity(90);
 		e.addPigeon(p1);
 
-		Pigeon p2 = new Pigeon("pigeon.jpg");
+		Pigeon p2 = new Pigeon("pigeon.png");
 		p2.setX(500);
 		p2.setY(400);
 		p2.setVelocity(110);
