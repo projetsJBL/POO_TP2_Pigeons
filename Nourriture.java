@@ -5,7 +5,7 @@ import javax.swing.JLabel;
  * Classe Objet
  * Implemente l'objet nourriture
  * @author Louis
- * maj 29/10/2016
+ * maj 30/10/2016
  */
 
 
@@ -15,25 +15,28 @@ public class Nourriture extends ElementDynamique {
 	 * ATTRIBUTS ET CONSTRUCTEUR
 	 */
 	
-	int quantite; //0 quand consommee, 1 sinon
+	int pourrir;
 	
 	public Nourriture(String imageName){
+		//graphique
 		setImageName(imageName);
 		JLabel label = new JLabel();
 		label.setIcon(new ImageIcon(imageName));
 		setLabel(label);
+		
+		pourrir = 0;
 	}
 	
 	/**
 	 * ACCESSEURS
 	 */
 	
-	public int getQuantite(){
-		return quantite;
+	public int getPourrir(){
+		return pourrir;
 	}
 	
-	public void setQuantite(int q){
-		quantite = q;
+	public void setPourrir(int i){
+		pourrir = i;
 	}
 	
 	/**
