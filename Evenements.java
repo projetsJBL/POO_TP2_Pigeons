@@ -22,6 +22,7 @@ public class Evenements extends JFrame {
 	private ArrayList<Pigeon> pigeons;
 	private static ArrayList<Nourriture> nourritures;
 	static Environnement ev;
+	static Evenements e = new Evenements();
 
 	// Constructeur
 	public Evenements() {
@@ -96,9 +97,26 @@ public class Evenements extends JFrame {
 			RemoveNourriture();
 			ev.remove(n.getLabel());
 			ev.repaint();
-			Main.evt.setVisible(true);
+			e.setVisible(true);
 		}
 
 	}
 
+	public static void main(String[] args) {
+		
+		// pigeons
+		Pigeon p1 = new Pigeon("pigeon.jpg");
+		p1.setX(10);
+		p1.setY(10);
+		p1.setVelocity(90);
+		e.addPigeon(p1);
+
+		Pigeon p2 = new Pigeon("pigeon.jpg");
+		p2.setX(500);
+		p2.setY(400);
+		p2.setVelocity(110);
+		e.addPigeon(p2);
+
+		e.startPigeon();
+	}
 }
