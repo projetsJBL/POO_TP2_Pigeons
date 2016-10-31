@@ -105,7 +105,7 @@ public class Environnement extends JPanel implements MouseListener {
 		System.out.println(xclic + ";" + yclic);
 
 		int min = 1;
-		int max = 1000;
+		int max = 10;
 		aleatoire = (int) (min + (Math.random() * max - min));
 		if (aleatoire > 1) {
 			peur = false;
@@ -128,7 +128,6 @@ public class Environnement extends JPanel implements MouseListener {
 			System.out.println("nourriture image " + n.getLabel().getLocation());
 
 		} else {
-
 			peur = true;
 
 			// Calcul de points de fuite
@@ -138,17 +137,18 @@ public class Environnement extends JPanel implements MouseListener {
 			setpointFuite(p);
 
 			// Gestion de la nourriture
-			Nourriture n = new Nourriture("fusil.jpg");
+			Nourriture n = new Nourriture("pokeball.png");
 			// ajout de nourriture dans la liste nourriture de pigeon à la
 			// position
 			// cliquée
 			n.setX((int) xclic);
 			n.setY((int) yclic);
-			Pigeon.addNourriture(n);
 
-			// Ajout de l'image dans l'interface graphique
-			Evenements.e.addNourriture(n);
-			Evenements.e.startNourriture();
+			// ajout de l'image dans l'interface graphique
+			n.getLabel().setBounds((int) n.getX(), (int) n.getY(), 100, 100);
+			this.add(n.getLabel());
+			Evenements.addPoke(n);
+			Evenements.e.startPokeball();
 
 			// Position de l'image dans l'interface graphique
 			System.out.println("nourriture image " + n.getLabel().getLocation());
