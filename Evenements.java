@@ -19,7 +19,7 @@ public class Evenements extends JFrame {
 	 * version par default
 	 */
 	/* Attributs */
-	private ArrayList<Pigeon> pigeons;
+
 	private static ArrayList<Nourriture> nourritures;
 	private static ArrayList<Nourriture> pokeball;
 	static Environnement ev;
@@ -43,7 +43,7 @@ public class Evenements extends JFrame {
 		addMouseListener(ev);
 
 		// Création des listes nécessaires
-		pigeons = new ArrayList<Pigeon>();
+
 		nourritures = new ArrayList<Nourriture>();
 		pokeball = new ArrayList<Nourriture>();
 	}
@@ -52,13 +52,8 @@ public class Evenements extends JFrame {
 		return pokeball;
 	}
 
-	// Ajout d'un pigeon dans la liste appropriée
-	public void addPigeon(Pigeon pigeon) {
-		pigeons.add(pigeon);
-	}
-
 	/* ajout de nourriture dans la liste appropriée */
-	public void addNourriture(Nourriture n) {
+	public static void addNourriture(Nourriture n) {
 		nourritures.add(n);
 	}
 
@@ -83,17 +78,18 @@ public class Evenements extends JFrame {
 	public void startPigeon() {
 		// Ajout des pigeons dans la fenêtre de jeux
 
-		for (Pigeon pigeon : pigeons) {
+		for (Pigeon pigeon : Pigeon.getPigeons()) {
 			pigeon.getLabel().setBounds((int) pigeon.getX(), (int) pigeon.getY(), 100, 100);
 			ev.add(pigeon.getLabel());
 			repaint();
 		}
 
 		setVisible(true);
-
-		for (Pigeon pigeon : pigeons) {
+		for (int i = 0; i < Pigeon.getPigeons().size(); i++) {
+			Pigeon.getPigeons().get(i).start();
+			System.out.println(Pigeon.getPigeons().size());
 			// appel du thread des pigeons
-			pigeon.start();
+
 		}
 
 	}
@@ -110,7 +106,7 @@ public class Evenements extends JFrame {
 	/* suppresion de l'image nourriture */
 	public static void supprimerNourriture(Nourriture n) {
 		if (!nourritures.isEmpty()) {
-			RemoveNourriture();
+
 			Pigeon.removeNourriture(n);
 			ev.remove(n.getLabel());
 			ev.repaint();
@@ -145,13 +141,11 @@ public class Evenements extends JFrame {
 		p1.setX(10);
 		p1.setY(10);
 		p1.setVelocity(90);
-		e.addPigeon(p1);
 
 		Pigeon p2 = new Pigeon("pigeon2.png");
 		p2.setX(500);
 		p2.setY(10);
 		p2.setVelocity(110);
-		e.addPigeon(p2);
 
 		/*
 		 * Pigeon p3 = new Pigeon("pigeon.png"); p3.setX(10); p3.setY(400);
