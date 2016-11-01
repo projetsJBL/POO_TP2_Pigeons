@@ -28,6 +28,7 @@ public class Environnement extends JPanel implements MouseListener {
 	/* Creation du fond */
 	@Override
 	protected void paintComponent(Graphics g) {
+
 		super.setOpaque(false);
 		g.drawImage(image.getImage(), 0, 0, null);
 		super.paintComponent(g);
@@ -43,15 +44,6 @@ public class Environnement extends JPanel implements MouseListener {
 		return aleatoire;
 	}
 
-	public int[] getTaille() {
-		int x = image.getIconWidth();
-		int y = image.getIconHeight();
-		int[] taille = { x, y };
-
-		return taille;
-
-	}
-
 	public static double getXclic() {
 		return xclic;
 	}
@@ -62,6 +54,22 @@ public class Environnement extends JPanel implements MouseListener {
 
 	public static boolean getPeur() {
 		return peur;
+	}
+
+	public void setImage(ImageIcon nomImage) {
+		image = nomImage;
+	}
+
+	public static void setAleatoire(int a) {
+		aleatoire = a;
+	}
+
+	public static void setXclic(int x) {
+		xclic = x;
+	}
+
+	public static void setYclic(int y) {
+		yclic = y;
 	}
 
 	public static void setPeur(Boolean b) {
@@ -94,22 +102,25 @@ public class Environnement extends JPanel implements MouseListener {
 	}
 
 	@Override
+	/* lorsaue le clic est releve */
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// on recupere les coordonnes de l'endroit cliquer
 		xclic = (int) e.getX();
 		yclic = (int) e.getY();
-		System.out.println(xclic + ";" + yclic);
 
+		// Generation d'un nombre aleatoire entre 1 et 10
 		int min = 1;
 		int max = 10;
 		aleatoire = (int) (min + (Math.random() * max - min));
+
+		// s'il est superieur strict a un c'est une nourriture
 		if (aleatoire > 1) {
 			peur = false;
+
 			// Gestion de la nourriture
 			Nourriture n = new Nourriture("nourriture.png");
-			// ajout de nourriture dans la liste nourriture de pigeon à la
-			// position
-			// cliquée
+			// ajout de nourriture dans la liste nourriture de Pigeon à la
+			// position cliquée
 			n.setX((int) xclic - 15);
 			n.setY((int) yclic - 85);
 			Pigeon.addNourriture(n);
@@ -119,31 +130,23 @@ public class Environnement extends JPanel implements MouseListener {
 			this.add(n.getLabel());
 			Evenements.e.startNourriture();
 
-			// Position de l'image dans l'interface graphique
-			System.out.println("nourriture image " + n.getLabel().getLocation());
-
 		} else {
 			peur = true;
 
-			// Gestion de la nourriture
+			// Gestion de la peur
 			Nourriture n = new Nourriture("pokeball.png");
-			// ajout de nourriture dans la liste nourriture de pigeon à la
-			// position
-			// cliquée
+			// Ajout de l'element declencheur dans la liste de pokeball de
+			// Evenement
 			n.setX((int) xclic - 15);
 			n.setY((int) yclic - 85);
+			Evenements.addPoke(n);
 
 			// ajout de l'image dans l'interface graphique
 			n.getLabel().setBounds((int) n.getX(), (int) n.getY(), 100, 100);
 			this.add(n.getLabel());
-			Evenements.addPoke(n);
 			Evenements.e.startPokeball();
-
-			// Position de l'image dans l'interface graphique
-			System.out.println("nourriture image " + n.getLabel().getLocation());
 
 		}
 	}
-	// Gestion de la peur, une chance sur 5;
 
 }
