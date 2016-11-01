@@ -15,7 +15,9 @@ public class Nourriture extends ElementDynamique {
 	 * ATTRIBUTS ET CONSTRUCTEUR
 	 */
 	
-	int pourrir;
+	private boolean pourrie;
+	static int seuil_pourriture = 10000;
+	private long time;
 	
 	public Nourriture(String imageName){
 		//graphique
@@ -24,19 +26,23 @@ public class Nourriture extends ElementDynamique {
 		label.setIcon(new ImageIcon(imageName));
 		setLabel(label);
 		
-		pourrir = 0;
+		pourrie = false;
+		time = System.currentTimeMillis();
 	}
 	
 	/**
 	 * ACCESSEURS
-	 */
-	
-	public int getPourrir(){
-		return pourrir;
+	 */	
+	public long getTime(){
+		return time;
 	}
 	
-	public void setPourrir(int i){
-		pourrir = i;
+	public boolean getPourrie(){
+		return pourrie;
+	}
+	
+	public void setPourrie(boolean b){
+		pourrie = b;
 	}
 	
 	/**
