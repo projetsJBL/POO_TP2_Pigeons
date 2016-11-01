@@ -11,13 +11,12 @@ import javax.swing.JLabel;
 
 public class Pigeon extends ElementDynamique {
 
-	private int velocity = 1;
+	private int velocity;
 	private Etat etat;
 	private static int fatigue;
 	private static ArrayList<Nourriture> nourriture = new ArrayList<Nourriture>();
 	private static ArrayList<Pigeon> pigeons = new ArrayList<Pigeon>();
 	private static ArrayList<Pokeball> pokeball = new ArrayList<Pokeball>();
-	private long time;
 	private double frameSprite;
 
 	String nom;
@@ -29,12 +28,11 @@ public class Pigeon extends ElementDynamique {
 		JLabel label = new JLabel();
 		label.setIcon(new ImageIcon(imageName));
 		setLabel(label);
-
 		// caracteristiques
 		pigeons.add(this);
+		setEtat(Etat.WAITING);
 		devantNourriture = false;
-		time = System.currentTimeMillis();
-
+		velocity = 100;
 		// pour affichage console
 		nom = "";
 	}
@@ -142,53 +140,43 @@ public class Pigeon extends ElementDynamique {
 			this.setEtat(Etat.RUNNING);
 
 		} else {
-
-			// (il n'y a plus de nourriture ou les nourriture sont pourries) et
-			// il n'est pas fatigue
-
-			if ((nourriture.isEmpty() || getLastNourriture().getPourrie()) && fatigue < 10) {
+			//(il n'y a plus de nourriture ou les nourriture sont pourries) et il n'est pas fatigue
+			if ((nourriture.isEmpty() || getLastNourriture().getPourrie())
+					&& fatigue < 10) {
 				this.setEtat(Etat.WAITING);
 			}
-
 			// il y a de la nourriture et elle n'est pas pourrie et il n'est pas
 			// devant la nourriture
-
-			else if (!nourriture.isEmpty() && !this.devantNourriture && !getLastNourriture().getPourrie()) {
+			else if (!nourriture.isEmpty() && !this.devantNourriture
+					&& !getLastNourriture().getPourrie()) {
 				// si il y a de la nourriture et qu'il n'a pas encore bouge
-
 				Nourriture n = nourriture.get(nourriture.size() - 1);
-				double[] vecteurPN = { n.getX() - this.getX(), n.getY() - this.getY() }; // vecteur
-																							// pigeon-nourriture
-				double normePN = Math.sqrt((Math.pow(vecteurPN[0], 2) + Math.pow(vecteurPN[1], 2))); // distance
-																										// pigeon-nourriture
+				// vecteur pigeon-nourriture
+				double[] vecteurPN = { n.getX() - this.getX(),n.getY() - this.getY() }; 
+				// distance pigeon-nourriture
+				double normePN = Math.sqrt((Math.pow(vecteurPN[0], 2) + Math.pow(vecteurPN[1], 2))); 
 				if (normePN > 1) {
 					this.setEtat(Etat.MOVING);
-					fatigue = 0; // on remet leur fatigue a 0 pour eviter qu'il
-									// s'endorment juste apres
+					// on remet leur fatigue a 0 pour eviter qu'il s'endorment juste apres
+					fatigue = 0; 
 				} else {
 					this.setDevantNourriture(true);
 				}
 			}
 
 			// il est devant la nourriture et elle n'est pas pourrie
-			else if (!nourriture.isEmpty() && this.devantNourriture && !getLastNourriture().getPourrie()) { // si
-																											// il
-																											// arrive
-																											// sur
-																											// de
-																											// la
-																											// nourriture
-																											// qui
-																											// n'est
-																											// pas
-																											// mangee
+			else if (!nourriture.isEmpty() && this.devantNourriture
+					// si il arrive sur de la nourriture qui n'est pas mangee
+					&& !getLastNourriture().getPourrie()) { 
 				System.out.println(this.getNom() + " ARRIVED");
-				System.out.println("Position arrivee " + this.getNom() + ": " + this.getX() + "," + this.getY());
+				System.out.println("Position arrivee " + this.getNom() + ": "
+						+ this.getX() + "," + this.getY());
 				this.setEtat(Etat.EATING);
 			}
 
 			// dormir
-			else if ((nourriture.isEmpty() || getLastNourriture().getPourrie()) && fatigue > 10) {
+			else if ((nourriture.isEmpty() || getLastNourriture().getPourrie())
+					&& fatigue > 10) {
 				this.setEtat(Etat.SLEEPING);
 			}
 		}
@@ -201,34 +189,23 @@ public class Pigeon extends ElementDynamique {
 		double normePN = 2;
 		Nourriture n = nourriture.get(nourriture.size() - 1);
 		if (normePN > 1) {
-			double[] vecteurPN = { n.getX() - this.getX(), n.getY() - this.getY() }; // vecteur
-																						// pigeon-nourriture
-			normePN = Math.sqrt((Math.pow(vecteurPN[0], 2) + Math.pow(vecteurPN[1], 2))); // distance
-																							// pigeon-nourriture
-			double[] PNnormalise = { vecteurPN[0] / normePN, vecteurPN[1] / normePN }; // Vecteur
-																						// normalise
-																						// pour
-																						// un
-																						// deplacement
-																						// a
-																						// vitesse
-																						// uniforme
-
+			// vecteur pigeon-nourriture
+			double[] vecteurPN = { n.getX() - this.getX(), n.getY() - this.getY() }; 			
+			// distance pigeon-nourriture
+			normePN = Math.sqrt((Math.pow(vecteurPN[0], 2) + Math.pow(vecteurPN[1], 2))); 
+			// Vecteur normalise pour un deplacement a vitesse uniforme
+			double[] PNnormalise = { vecteurPN[0] / normePN,vecteurPN[1] / normePN }; 
 			// tant qu'il n'a pas atteint la destination (approximatif)
 			this.setX(this.getX() + PNnormalise[0]);
 			this.setY(this.getY() + PNnormalise[1]);
-			this.getLabel().setLocation((int) this.getX(), (int) this.getY()); // on
-																				// met
-																				// a
-																				// jour
-																				// le
-																				// sprite
-
+			// on met a jour le sprite
+			this.getLabel().setLocation((int) this.getX(), (int) this.getY()); 
 			// on recalcule la position du pigeon par rapport a la nourriture
 			vecteurPN[0] = n.getX() - this.getX();
 			vecteurPN[1] = n.getY() - this.getY();
-			normePN = Math.sqrt((Math.pow(vecteurPN[0], 2) + Math.pow(vecteurPN[1], 2))); // distance
-																							// pigeon-nourriture
+			// distance pigeon-nourriture
+			normePN = Math.sqrt((Math.pow(vecteurPN[0], 2) + Math.pow(
+					vecteurPN[1], 2))); 
 		}
 	}
 
@@ -247,29 +224,20 @@ public class Pigeon extends ElementDynamique {
 		// position pokeball
 		double x = (double) Environnement.getXclic();
 		double y = (double) Environnement.getYclic();
-
 		// vecteur fuite
 		double[] vecteurFuite = { this.getX() - x, this.getY() - y };
-		double normeVecteurFuite = Math.sqrt((Math.pow(vecteurFuite[0], 2) + Math.pow(vecteurFuite[1], 2))); // distance
-																												// pigeon-pokeball
-		double[] vecteurFuiteNormalise = { vecteurFuite[0] / normeVecteurFuite, vecteurFuite[1] / normeVecteurFuite }; // Vecteur
-																														// normalise
-																														// pour
-																														// un
-																														// deplacement
-																														// a
-																														// vitesse
-																														// uniforme
-
+		// distance pigeon-pokeball
+		double normeVecteurFuite = Math
+				.sqrt((Math.pow(vecteurFuite[0], 2) + Math.pow(vecteurFuite[1],
+						2)));
+		// Vecteur normalise pour un deplacementa vitesse uniforme
+		double[] vecteurFuiteNormalise = { vecteurFuite[0] / normeVecteurFuite,
+				vecteurFuite[1] / normeVecteurFuite };
 		// fuite
 		this.setX(this.getX() + vecteurFuiteNormalise[0]);
 		this.setY(this.getY() + vecteurFuiteNormalise[1]);
-		this.getLabel().setLocation((int) this.getX(), (int) this.getY()); // on
-																			// met
-																			// a
-																			// jour
-																			// le
-																			// sprite
+		// on met a jour le sprite
+		this.getLabel().setLocation((int) this.getX(), (int) this.getY()); 
 
 		// condition de fin de fuite
 		if (System.currentTimeMillis() - getLastPokeball().getTime() > 2000) {
@@ -332,7 +300,8 @@ public class Pigeon extends ElementDynamique {
 					Thread.sleep(1000);
 					this.setDevantNourriture(false);
 					System.out.println(this.getNom() + " ATE");
-					System.out.println("Il reste " + nourriture.size() + " nourritures");
+					System.out.println("Il reste " + nourriture.size()
+							+ " nourritures");
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -354,7 +323,6 @@ public class Pigeon extends ElementDynamique {
 					e.printStackTrace();
 				}
 			default:
-				System.out.println("Default case in run method");
 				break;
 			}
 		}
