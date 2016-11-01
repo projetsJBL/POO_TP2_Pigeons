@@ -1,193 +1,293 @@
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 /**
- * Classe Evenements Implemente l'interface graphique et appel le thread pigeon
- * 
- * @author JB maj 29/10/2016
+ * Classe Objet
+ * Implemente l'element dynamique pigeon
+ * @author MrMephisto
+ * maj 30/10/2016
  */
 
-public class Evenements extends JFrame {
-	private static final long serialVersionUID = 1L;
-	/**
-	 * version par default
-	 */
-	/* Attributs */
-
-	private static ArrayList<Nourriture> nourritures;
-	private static ArrayList<Nourriture> pokeball;
-	static Environnement ev;
-	static Evenements e = new Evenements();
-
-	// Constructeur
-	public Evenements() {
-		super("Jeu des Pigeons affamés");
-
-		// on récupère l'image
-		ev = new Environnement();
-		ImageIcon image = ev.getImage();
-
-		// on adapte la fenêtre à la taille de l'image de fond
-		ev.setLayout(null);
-		this.setSize(image.getIconWidth(), image.getIconHeight());
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-		/* evenemnt Souris */
-		add(ev);
-		addMouseListener(ev);
-
-		// Création des listes nécessaires
-
-		nourritures = new ArrayList<Nourriture>();
-		pokeball = new ArrayList<Nourriture>();
-	}
-
-	public ArrayList<Nourriture> getPokeball() {
-		return pokeball;
-	}
-
-	/* ajout de nourriture dans la liste appropriée */
-	public static void addNourriture(Nourriture n) {
-		nourritures.add(n);
-	}
-
-	// Retirer de la nourriture quand elle est mangée
-	// retire le dernier élément ajouter
-	public static void RemoveNourriture() {
-		int i = nourritures.size();
-		nourritures.remove(i - 1);
-
-	}
-
-	public static void addPoke(Nourriture poke) {
-		pokeball.add(poke);
-	}
-
-	public static void RemovePokeball() {
-		int i = pokeball.size();
-		pokeball.remove(i - 1);
-	}
-
-	/* appel du thread et affichage des pigeons */
-	public void startPigeon() {
-		// Ajout des pigeons dans la fenêtre de jeux
-
-		for (Pigeon pigeon : Pigeon.getPigeons()) {
-			pigeon.getLabel().setBounds((int) pigeon.getX(), (int) pigeon.getY(), 100, 100);
-			ev.add(pigeon.getLabel());
-			repaint();
-		}
-
-		setVisible(true);
-		for (int i = 0; i < Pigeon.getPigeons().size(); i++) {
-			Pigeon.getPigeons().get(i).start();
-			System.out.println(Pigeon.getPigeons().size());
-			// appel du thread des pigeons
-
-		}
-
-	}
-
-	/* ajout de l'image nourriture dans l'interface */
-	public void startNourriture() {
-		for (Nourriture nourriture : nourritures) {
-			
-			nourriture.getLabel().setBounds((int) nourriture.getX(), (int) nourriture.getY(), 100, 100);
-			ev.repaint();
-			setVisible(true);
-			
-		}
-	}
-
-	/* suppresion de l'image nourriture */
-	public static void supprimerNourriture(Nourriture n) {
-		if (!nourritures.isEmpty()) {
-
-			Pigeon.removeNourriture(n);
-			ev.remove(n.getLabel());
-			ev.repaint();
-			e.setVisible(true);
-		}
-
-	}
-
-	public void startPokeball() {
-		for (Nourriture poke : pokeball) {
-			poke.getLabel().setBounds((int) poke.getX(), (int) poke.getY(), 100, 100);
-			ev.repaint();
-			setVisible(true);
-		}
-	}
-
-	/* suppresion de l'image nourriture */
-	public static void supprimerPokeball(Nourriture poke) {
-		if (!nourritures.isEmpty()) {
-			RemovePokeball();
-			ev.remove(poke.getLabel());
-			ev.repaint();
-			e.setVisible(true);
-		}
-
-	}
-
-	public static void main(String[] args) {
-
-		// pigeons
-		Pigeon p1 = new Pigeon("pigeon.png");
-		p1.setX(10);
-		p1.setY(10);
-		p1.setVelocity(90);
-		p1.setNom("p1");
-
-		Pigeon p2 = new Pigeon("pigeon2.png");
-		p2.setX(500);
-		p2.setY(10);
-		p2.setVelocity(110);
-		p2.setNom("p2");
-
-		/*
-		 * Pigeon p3 = new Pigeon("pigeon.png"); p3.setX(10); p3.setY(400);
-		 * p3.setVelocity(90); e.addPigeon(p3);
-		 * 
-		 * Pigeon p4 = new Pigeon("pigeon2.png"); p4.setX(10); p4.setY(200);
-		 * p4.setVelocity(110); e.addPigeon(p4);
-		 * 
-		 * Pigeon p5 = new Pigeon("pigeon.png"); p5.setX(250); p5.setY(10);
-		 * p5.setVelocity(90); e.addPigeon(p5);
-		 * 
-		 * Pigeon p6 = new Pigeon("pigeon2.png"); p6.setX(500); p6.setY(400);
-		 * p6.setVelocity(110); e.addPigeon(p6);
-		 */
-
-		e.startPigeon();
+public class Pigeon extends ElementDynamique{
+	
+	private int velocity = 1;
+	private Etat etat;
+	private static int fatigue;
+	private static ArrayList<Nourriture> nourriture = new ArrayList<Nourriture>();
+	private static ArrayList<Pigeon> pigeons = new ArrayList<Pigeon>();
+	private int timer;
+	private double frameSprite;
+	
+	String nom;
+	boolean devantNourriture;
+	
+	public Pigeon(String imageName){
+		//graphique
+		setImageName(imageName);
+		JLabel label = new JLabel();
+		label.setIcon(new ImageIcon(imageName));
+		setLabel(label);
+		
+		//caracteristiques
+		pigeons.add(this);
+		devantNourriture = false;
+		
+		//pour tests
+		nom = "";		
 	}
 	
-	public static void determinerImage(Pigeon p){
-		JLabel label = p.getLabel();
-		
-		if(p.getEtat().equals(Etat.SLEEPING)){
-			label.setIcon(new ImageIcon("pigeon_endormi.png"));
-			p.setLabel(label);
+	/**
+	 * ACCESSEURS
+	 */
+	public Etat getEtat(){
+		return etat;
+	}
+	
+	public static ArrayList<Nourriture> getNourriture(){
+		return nourriture;
+	}
+	
+	public String getNom(){
+		return nom;
+	}
+	
+	public static ArrayList<Pigeon> getPigeons(){
+		return pigeons;
+	}
+	
+	public boolean getDevantNourriture(){
+		return devantNourriture;
+	}
+	
+	public double getFrameSprite(){
+		return frameSprite;
+	}
+	
+	public void setEtat(Etat e){
+		etat = e;
+	}
+	
+	public void setNom(String new_nom){
+		nom = new_nom;
+	}
+	
+	public void setDevantNourriture(boolean b){
+		devantNourriture = b;
+	}
+	
+	public void setVelocity(int v){
+		velocity = v;
+	}
+	
+	public void setFrameSprite(double f){
+		frameSprite = f;
+	}
+	
+	
+	/**
+	 * METHODES
+	 */
+	
+	/*
+	 * Acces aux listes
+	 */
+	public static void addNourriture(Nourriture n){
+		nourriture.add(n);
+	}
+	
+	
+	public static void removeNourriture(Nourriture n){
+		if(!nourriture.isEmpty()){
+			nourriture.remove(n);
 		}
-		else if(p.getEtat().equals(Etat.RUNNING)){
-			label.setIcon(new ImageIcon("pigeon_peur.png"));
-			p.setLabel(label);
-		}
-		else if(p.getFrameSprite()> 15 && !p.getEtat().equals(Etat.WAITING)){
-			label.setIcon(new ImageIcon("pigeon2.png"));
-			p.setLabel(label);
-			if(p.getFrameSprite() > 30) p.setFrameSprite(0);
+		else
+			System.out.println("nourriture vide");
+	}
+	
+	public static void addPigeon(Pigeon p){
+		pigeons.add(p);
+	}
+	
+	/*
+	 * Determine l'etat du pigeon selon la situation
+	 */
+	public void determinerEtat(){	
+		if(Environnement.getPeur()){
+			this.setEtat(Etat.RUNNING);
+			this.timer++;
 		}
 		else{
-			label.setIcon(new ImageIcon("pigeon.png"));
-			p.setLabel(label);
+			this.timer = 0;
+			//(il n'y a plus de nourriture ou les nourriture sont pourries) et il n'est pas fatigue
+			if((nourriture.isEmpty() || nourriture.get(nourriture.size()-1).getPourrir() > 1000) && fatigue < 10){
+				System.out.println("c1 :" + (nourriture.isEmpty() || nourriture.get(nourriture.size()-1).getPourrir() > 1000));
+				System.out.println("c2: " + (fatigue < 20));
+				System.out.println("c3: " + (!this.devantNourriture));
+				this.setEtat(Etat.WAITING);
+			}
+			
+			//il y a de la nourriture et elle n'est pas pourrie et il n'est pas devant la nourriture
+			else if (!nourriture.isEmpty() && !this.devantNourriture && nourriture.get(nourriture.size()-1).getPourrir() < 1000){ //si il y a de la nourriture et qu'il n'a pas encore bouge
+				Nourriture n = nourriture.get(nourriture.size()-1);
+				double[] vecteurPN = {n.getX() - this.getX(), n.getY() - this.getY()}; //vecteur pigeon-nourriture
+				double normePN = Math.sqrt((Math.pow(vecteurPN[0], 2) + Math.pow(vecteurPN[1], 2))); //distance pigeon-nourriture			
+				if(normePN > 1){
+					this.setEtat(Etat.MOVING);
+					fatigue = 0; //on remet leur fatigue a 0 pour eviter qu'il s'endorment juste apres
+				}
+				else{
+					this.setDevantNourriture(true);
+				}
+			}
+			
+			//il est devant la nourriture
+			else if(!nourriture.isEmpty() && this.devantNourriture){ //si il arrive sur de la nourriture qui n'est pas mangee
+				if(nourriture.get(nourriture.size()-1).getPourrir() < 1000){
+					System.out.println(this.getNom() + " ARRIVED");
+					System.out.println("Position arrivee " + this.getNom() + ": " + this.getX() + "," + this.getY());
+					this.setEtat(Etat.EATING);
+				}
+				else{
+					this.setDevantNourriture(false);
+					//this.setEtat(Etat.WAITING);
+				}
+			}
+			
+			//dormir
+			else if((nourriture.isEmpty() || nourriture.get(nourriture.size()-1).getPourrir() > 1000) && fatigue > 10){				
+				this.setEtat(Etat.SLEEPING);
+			}
 		}
 	}
+	
+	/*
+	 * Deplacement du pigeon vers une position donnee
+	 */
+	public void seDeplacer(){
+		double normePN = 2;
+		Nourriture n = nourriture.get(nourriture.size()-1);
+		if(normePN > 1 ){			
+			double[] vecteurPN = {n.getX() - this.getX(), n.getY() - this.getY()}; //vecteur pigeon-nourriture
+			normePN = Math.sqrt((Math.pow(vecteurPN[0], 2) + Math.pow(vecteurPN[1], 2))); //distance pigeon-nourriture
+			double[] PNnormalise = {vecteurPN[0] / normePN, vecteurPN[1] / normePN}; //Vecteur normalise pour un deplacement a vitesse uniforme
+			
+			//tant qu'il n'a pas atteint la destination (approximatif) 		
+			this.setX(this.getX() + PNnormalise[0]);
+			this.setY(this.getY() + PNnormalise[1]);
+			this.getLabel().setLocation((int)this.getX(), (int)this.getY()); //on met a jour le sprite
+			
+			//on recalcule la position du pigeon par rapport a la nourriture
+			vecteurPN[0] = n.getX() - this.getX();
+			vecteurPN[1] = n.getY() - this.getY();
+			normePN = Math.sqrt((Math.pow(vecteurPN[0], 2) + Math.pow(vecteurPN[1], 2))); //distance pigeon-nourriture
+		}			
+	}
+	
+	/*
+	 * Mange et retire la nourriture la plus fraiche de la liste nourriture si tous les pigeons l'ont mange
+	 */
+	public void manger(Nourriture n){	
+			removeNourriture(n);
+	}
+	
+	/*
+	 * Les pigeons fuient
+	 */
+	public void fuir(){		
+		//position pokeball
+		double x = (double)Environnement.getXclic();
+		double y = (double)Environnement.getYclic();
+		
+		//vecteur fuite
+		double[] vecteurFuite = {this.getX() - x, this.getY() - y};
+		double normeVecteurFuite = Math.sqrt((Math.pow(vecteurFuite[0], 2) + Math.pow(vecteurFuite[1], 2))); //distance pigeon-pokeball
+		double[] vecteurFuiteNormalise = {vecteurFuite[0] / normeVecteurFuite, vecteurFuite[1] / normeVecteurFuite}; //Vecteur normalise pour un deplacement a vitesse uniforme
+					
+		//fuite
+		this.setX(this.getX() + vecteurFuiteNormalise[0]);
+		this.setY(this.getY() + vecteurFuiteNormalise[1]);
+		this.getLabel().setLocation((int)this.getX(), (int)this.getY()); //on met a jour le sprite
+		
+		//condition de fin de fuite
+		if(timer > 250){	
+			Environnement.setPeur(false);
+		}
+		
+	}
+	
+	/**
+	 * THREAD
+	 */
+	
+	@Override
+	public void run(){
+		while(true){
+			this.frameSprite++;
+			
+			this.determinerEtat();
+			Evenements.determinerImage(this);
+			
+			//les aliments se periment
+			if(!nourriture.isEmpty()){
+				for(Nourriture n : nourriture){
+					n.setPourrir(n.getPourrir()+1);
+					if(n.getPourrir() > 1000){
+						JLabel label = n.getLabel();
+						label.setIcon(new ImageIcon("nourriture_pourrie.png"));
+						n.setLabel(label);
+					}
+				}			
+			}			
+			
+			switch(this.getEtat()){
+			case WAITING: 
+				try {
+					fatigue++;
+					System.out.println("fatigue: " + fatigue);
+					Thread.sleep(1000);
+					System.out.println(this.getNom() + " WAITING...");
+				} catch (InterruptedException e1) {e1.printStackTrace();}
+				break;
+			case MOVING:
+				try {		
+					this.seDeplacer();
+					Thread.sleep(1000/velocity);
+					} catch (InterruptedException e) {e.printStackTrace();}
+				break;
+			case EATING:
+				try{
+					Nourriture n = nourriture.get(nourriture.size()-1);
+					System.out.println(this.getNom() + " EATING...");
+					if(n.getPourrir() < 1000){
+						this.manger(n);
+						Evenements.supprimerNourriture(n);
+					}
+					Thread.sleep(1000);
+					this.setDevantNourriture(false);
+					System.out.println(this.getNom() + " ATE");
+					System.out.println("Il reste " + nourriture.size() + " nourritures");
+				}catch (InterruptedException e) {e.printStackTrace();}
+				break;
+			case SLEEPING:
+				try{
+					System.out.println(this.getNom() + " SLEEPING...");
+					Thread.sleep(1000);
+				}catch (InterruptedException e) {e.printStackTrace();}
+				break;
+			case RUNNING:
+				try{
+					System.out.println(this.getNom() + " is RUNNING");
+					this.fuir();
+					Thread.sleep(1000/velocity);
+				}catch (InterruptedException e) {e.printStackTrace();}
+			default:
+					System.out.println("Default case in run method");
+					break;
+			}
+		}
+	}
+	
+	
 }
