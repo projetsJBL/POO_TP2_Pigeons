@@ -14,7 +14,7 @@ deux pigeons sont en etat attente.
 
 Pour leur donner de la nourriture, il suffit de cliquer sur l'ecran de jeu.
 Chaque pigeon cherchera a manger la nourriture la plus fraiche,
-et le premier arrive sera servi,
+et c'est le premier qui arrive sera servi,
 tandis que l'autre attendra s'il n'y a plus de nourriture disponible
 ou ira chercher la suivante.
 
