@@ -18,6 +18,7 @@ public class Pigeon extends ElementDynamique{
 	private static ArrayList<Nourriture> nourriture = new ArrayList<Nourriture>();
 	private static ArrayList<Pigeon> pigeons = new ArrayList<Pigeon>();
 	private int timer;
+	private double frameSprite;
 	
 	String nom;
 	boolean devantNourriture;
@@ -30,7 +31,6 @@ public class Pigeon extends ElementDynamique{
 		setLabel(label);
 		
 		//caracteristiques
-		etat = Etat.WAITING; //le pigeon est en attente par defaut
 		pigeons.add(this);
 		devantNourriture = false;
 		
@@ -61,6 +61,10 @@ public class Pigeon extends ElementDynamique{
 		return devantNourriture;
 	}
 	
+	public double getFrameSprite(){
+		return frameSprite;
+	}
+	
 	public void setEtat(Etat e){
 		etat = e;
 	}
@@ -75,6 +79,10 @@ public class Pigeon extends ElementDynamique{
 	
 	public void setVelocity(int v){
 		velocity = v;
+	}
+	
+	public void setFrameSprite(double f){
+		frameSprite = f;
 	}
 	
 	
@@ -112,41 +120,45 @@ public class Pigeon extends ElementDynamique{
 		}
 		else{
 			this.timer = 0;
-		//il n'y a plus de nourriture
-		if(nourriture.isEmpty() && fatigue < 300 && !this.devantNourriture)
-			this.setEtat(Etat.WAITING);
-		
-		//il y a de la nourriture
-		else if (!nourriture.isEmpty() && !this.devantNourriture ){ //si il y a de la nourriture et qu'il n'a pas encore bouge
-			Nourriture n = nourriture.get(nourriture.size()-1);
-			double[] vecteurPN = {n.getX() - this.getX(), n.getY() - this.getY()}; //vecteur pigeon-nourriture
-			double normePN = Math.sqrt((Math.pow(vecteurPN[0], 2) + Math.pow(vecteurPN[1], 2))); //distance pigeon-nourriture			
-			if(normePN > 1 && nourriture.get(nourriture.size()-1).getPourrir() < 1000){
-				this.setDevantNourriture(false);
-				this.setEtat(Etat.MOVING);
-				fatigue = 0; //on remet leur fatigue a 0 pour eviter qu'il s'endorment juste apres
-			}
-			else{
-				this.setDevantNourriture(true);
-			}
-		}
-		
-		//manger
-		else if(!nourriture.isEmpty() && this.devantNourriture){ //si il arrive sur de la nourriture qui n'est pas mangee
-			if(nourriture.get(nourriture.size()-1).getPourrir() < 1000){
-				System.out.println(this.getNom() + " ARRIVED");
-				System.out.println("Position arrivee " + this.getNom() + ": " + this.getX() + "," + this.getY());
-				this.setEtat(Etat.EATING);
-			}
-			else{
-				this.setDevantNourriture(false);
+			//(il n'y a plus de nourriture ou les nourriture sont pourries) et il n'est pas fatigue
+			if((nourriture.isEmpty() || nourriture.get(nourriture.size()-1).getPourrir() > 1000) && fatigue < 10){
+				System.out.println("c1 :" + (nourriture.isEmpty() || nourriture.get(nourriture.size()-1).getPourrir() > 1000));
+				System.out.println("c2: " + (fatigue < 20));
+				System.out.println("c3: " + (!this.devantNourriture));
 				this.setEtat(Etat.WAITING);
 			}
-		}
-		
-		//dormir
-		else if(nourriture.isEmpty() && fatigue >= 300)
-			this.setEtat(Etat.SLEEPING);
+			
+			//il y a de la nourriture et elle n'est pas pourrie et il n'est pas devant la nourriture
+			else if (!nourriture.isEmpty() && !this.devantNourriture && nourriture.get(nourriture.size()-1).getPourrir() < 1000){ //si il y a de la nourriture et qu'il n'a pas encore bouge
+				Nourriture n = nourriture.get(nourriture.size()-1);
+				double[] vecteurPN = {n.getX() - this.getX(), n.getY() - this.getY()}; //vecteur pigeon-nourriture
+				double normePN = Math.sqrt((Math.pow(vecteurPN[0], 2) + Math.pow(vecteurPN[1], 2))); //distance pigeon-nourriture			
+				if(normePN > 1){
+					this.setEtat(Etat.MOVING);
+					fatigue = 0; //on remet leur fatigue a 0 pour eviter qu'il s'endorment juste apres
+				}
+				else{
+					this.setDevantNourriture(true);
+				}
+			}
+			
+			//il est devant la nourriture
+			else if(!nourriture.isEmpty() && this.devantNourriture){ //si il arrive sur de la nourriture qui n'est pas mangee
+				if(nourriture.get(nourriture.size()-1).getPourrir() < 1000){
+					System.out.println(this.getNom() + " ARRIVED");
+					System.out.println("Position arrivee " + this.getNom() + ": " + this.getX() + "," + this.getY());
+					this.setEtat(Etat.EATING);
+				}
+				else{
+					this.setDevantNourriture(false);
+					//this.setEtat(Etat.WAITING);
+				}
+			}
+			
+			//dormir
+			else if((nourriture.isEmpty() || nourriture.get(nourriture.size()-1).getPourrir() > 1000) && fatigue > 10){				
+				this.setEtat(Etat.SLEEPING);
+			}
 		}
 	}
 	
@@ -212,6 +224,11 @@ public class Pigeon extends ElementDynamique{
 	@Override
 	public void run(){
 		while(true){
+			this.frameSprite++;
+			
+			this.determinerEtat();
+			Evenements.determinerImage(this);
+			
 			//les aliments se periment
 			if(!nourriture.isEmpty()){
 				for(Nourriture n : nourriture){
@@ -222,16 +239,13 @@ public class Pigeon extends ElementDynamique{
 						n.setLabel(label);
 					}
 				}			
-			}
-			
-			this.determinerEtat();
-			
-			
+			}			
 			
 			switch(this.getEtat()){
 			case WAITING: 
 				try {
 					fatigue++;
+					System.out.println("fatigue: " + fatigue);
 					Thread.sleep(1000);
 					System.out.println(this.getNom() + " WAITING...");
 				} catch (InterruptedException e1) {e1.printStackTrace();}
