@@ -10,7 +10,6 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class Environnement extends JPanel implements MouseListener {
@@ -52,11 +51,11 @@ public class Environnement extends JPanel implements MouseListener {
 
 	}
 
-	public static double getXclic() {
+	public static int getXclic() {
 		return xclic;
 	}
 
-	public static double getYclic() {
+	public static int getYclic() {
 		return yclic;
 	}
 
@@ -68,7 +67,19 @@ public class Environnement extends JPanel implements MouseListener {
 		peur = b;
 	}
 
-	/* Evenements des cliques */
+	public static void setAleatoire(int a) {
+		aleatoire = a;
+	}
+
+	public static void setXclic(int x) {
+		xclic = x;
+	}
+
+	public static void setYclic(int y) {
+		yclic = y;
+	}
+
+	/* Evenements clics de souris */
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -93,23 +104,25 @@ public class Environnement extends JPanel implements MouseListener {
 
 	}
 
+	/* Au relachement du clique */
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+
 		xclic = (int) e.getX();
 		yclic = (int) e.getY();
-		System.out.println(xclic + ";" + yclic);
 
+		// Généréation aléatoire d'un nombre entre et 1 et 10
 		int min = 1;
-		int max = 20;
+		int max = 10;
 		aleatoire = (int) (min + (Math.random() * max - min));
+
+		// Si le nombre n'est pas 1, le clique de souris génére une nourriture
 		if (aleatoire > 1) {
 			peur = false;
 			// Gestion de la nourriture
 			Nourriture n = new Nourriture("nourriture.png");
 			// ajout de nourriture dans la liste nourriture de pigeon à la
-			// position
-			// cliquée
+			// position cliquée
 			n.setX((int) xclic - 15);
 			n.setY((int) yclic - 85);
 			Pigeon.addNourriture(n);
@@ -117,20 +130,13 @@ public class Environnement extends JPanel implements MouseListener {
 			// Ajout de l'image dans l'interface graphique
 			n.getLabel().setBounds((int) n.getX(), (int) n.getY(), 100, 100);
 			this.add(n.getLabel());
-			Evenements.addNourriture(n);
 			Evenements.e.startNourriture();
-
-			// Position de l'image dans l'interface graphique
-			System.out.println("nourriture image " + n.getLabel().getLocation());
 
 		} else {
 			peur = true;
 
 			// Gestion de la Pokeball
 			Pokeball p = new Pokeball("pokeball.png");
-			// ajout de nourriture dans la liste nourriture de pigeon à la
-			// position
-			// cliquée
 			p.setX((int) xclic - 15);
 			p.setY((int) yclic - 85);
 
@@ -139,12 +145,7 @@ public class Environnement extends JPanel implements MouseListener {
 			this.add(p.getLabel());
 			Evenements.addPoke(p);
 			Evenements.e.startPokeball();
-
-			// Position de l'image dans l'interface graphique
-			System.out.println("nourriture image " + p.getLabel().getLocation());
-
 		}
 	}
-	// Gestion de la peur, une chance sur 5;
 
 }
