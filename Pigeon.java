@@ -33,6 +33,7 @@ public class Pigeon extends ElementDynamique {
 		setEtat(Etat.WAITING);
 		devantNourriture = false;
 		velocity = 100;
+		fatigue = 0;
 		// pour affichage console
 		nom = "";
 	}
@@ -137,12 +138,11 @@ public class Pigeon extends ElementDynamique {
 	 */
 	public void determinerEtat() {
 		if (Environnement.getPeur()) {
+			fatigue = 0;
 			this.setEtat(Etat.RUNNING);
-
 		} else {
 			//(il n'y a plus de nourriture ou les nourriture sont pourries) et il n'est pas fatigue
-			if ((nourriture.isEmpty() || getLastNourriture().getPourrie())
-					&& fatigue < 10) {
+			if ((nourriture.isEmpty() || getLastNourriture().getPourrie()) && fatigue < 10) {
 				this.setEtat(Etat.WAITING);
 			}
 			// il y a de la nourriture et elle n'est pas pourrie et il n'est pas
@@ -163,20 +163,15 @@ public class Pigeon extends ElementDynamique {
 					this.setDevantNourriture(true);
 				}
 			}
-
 			// il est devant la nourriture et elle n'est pas pourrie
-			else if (!nourriture.isEmpty() && this.devantNourriture
-					// si il arrive sur de la nourriture qui n'est pas mangee
-					&& !getLastNourriture().getPourrie()) { 
+			else if (!nourriture.isEmpty() && this.devantNourriture && !getLastNourriture().getPourrie()) { 
 				System.out.println(this.getNom() + " ARRIVED");
 				System.out.println("Position arrivee " + this.getNom() + ": "
 						+ this.getX() + "," + this.getY());
 				this.setEtat(Etat.EATING);
 			}
-
 			// dormir
-			else if ((nourriture.isEmpty() || getLastNourriture().getPourrie())
-					&& fatigue > 10) {
+			else if ((nourriture.isEmpty() || getLastNourriture().getPourrie()) && fatigue > 10) {
 				this.setEtat(Etat.SLEEPING);
 			}
 		}
@@ -203,9 +198,8 @@ public class Pigeon extends ElementDynamique {
 			// on recalcule la position du pigeon par rapport a la nourriture
 			vecteurPN[0] = n.getX() - this.getX();
 			vecteurPN[1] = n.getY() - this.getY();
-			// distance pigeon-nourriture
-			normePN = Math.sqrt((Math.pow(vecteurPN[0], 2) + Math.pow(
-					vecteurPN[1], 2))); 
+			// recalcul de la distance pigeon-nourriture
+			normePN = Math.sqrt((Math.pow(vecteurPN[0], 2) + Math.pow(vecteurPN[1], 2))); 
 		}
 	}
 
@@ -261,7 +255,6 @@ public class Pigeon extends ElementDynamique {
 			// les aliments se periment
 			if (!nourriture.isEmpty()) {
 				for (Nourriture n : nourriture) {
-
 					if (System.currentTimeMillis() - n.getTime() > Nourriture.seuil_pourriture) {
 						n.setPourrie(true);
 						JLabel label = n.getLabel();
